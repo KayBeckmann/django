@@ -2,15 +2,11 @@
 <nav class="navbar shadow p-3 mb-4" style="background-color: #588157;">
   <div class="container-fluid">
     <a class="navbar-brand link-light" href="{% url 'shop' %}"><img src="{% static 'img/logo.png' %}" alt="TechMax"></a>
-      <ul class="navbar-nav">
-        <div class="d-flex">
-        <li class="nav-item">
-          <a class="nav-link p-2 link-light" href="#">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link p-2 link-light" href="{% url 'warenkorb' %}">Warenkorb</a>
-        </li>
-      </div>
-      </ul>
+    <div class="d-flex align-items-center">
+      <a class="btn btn-light p-2" href="#">Login</a>
+      <a class="nav-link p-2 link-light" href="{% url 'warenkorb' %}"><img src="{% static 'img/floppy.png' %}" alt="Warenkorb">
+        <span class="badge rounded-pill bg-danger position-absolute top-25 start-25 translate-middle">5</span>
+      </a>
+    </div>
   </div>
 </nav>
