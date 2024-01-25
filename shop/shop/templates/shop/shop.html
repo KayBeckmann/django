@@ -2,55 +2,20 @@
 {% load static %}
 {% block content %}
   <div class="row row-cols-4">
-      {% comment %} CARD {% endcomment %}
-      <div class="card col mb-3" style="max-width: 550px;">
-        <img src="{% static 'img/kopfhoerer.jpg' %}" class="card-img-top" alt="Kopfhörer">
-        <div class="card-body">
-          <h5 class="card-title">Kopfhörer</h5>
-          <p class="card-text">Bluetooth Kopfhörer mit ANC (active noice canceling)</p>
-          <a href="#" class="btn btn-secondary">Kaufen</a>
-        </div>
-      </div>
-      {% comment %} CARD END{% endcomment %}
-            {% comment %} CARD {% endcomment %}
-            <div class="card col mb-3" style="max-width: 550px;">
-              <img src="{% static 'img/kopfhoerer.jpg' %}" class="card-img-top" alt="Kopfhörer">
-              <div class="card-body">
-                <h5 class="card-title">Kopfhörer</h5>
-                <p class="card-text">Bluetooth Kopfhörer mit ANC (active noice canceling)</p>
-                <a href="#" class="btn btn-secondary">Kaufen</a>
-              </div>
+      {% for artikel in artikels %}
+      <div class="col mb-3">
+        <div class="card" style="max-width: 550px;">
+          <img src="{% static 'img/kopfhoerer.jpg' %}" class="card-img-top" alt="Kopfhörer">
+          <div class="card-body">
+            <h5 class="card-title">{{ artikel.name }}</h5>
+            <p class="card-text">{{ artikel.beschreibung }}</p>
+            <div class="d-flex justify-content-between">
+              <h5 class="text-secondary">{{ artikel.preis|floatformat:2 }}€</h5>
+              <a href="#" class="btn btn-outline-danger">Bestellen</a>
             </div>
-            {% comment %} CARD END{% endcomment %}
-                  {% comment %} CARD {% endcomment %}
-      <div class="card col mb-3" style="max-width: 550px;">
-        <img src="{% static 'img/kopfhoerer.jpg' %}" class="card-img-top" alt="Kopfhörer">
-        <div class="card-body">
-          <h5 class="card-title">Kopfhörer</h5>
-          <p class="card-text">Bluetooth Kopfhörer mit ANC (active noice canceling)</p>
-          <a href="#" class="btn btn-secondary">Kaufen</a>
+          </div>
         </div>
       </div>
-      {% comment %} CARD END{% endcomment %}
-            {% comment %} CARD {% endcomment %}
-            <div class="card col mb-3" style="max-width: 300px;">
-              <img src="{% static 'img/kopfhoerer.jpg' %}" class="card-img-top" alt="Kopfhörer">
-              <div class="card-body">
-                <h5 class="card-title">Kopfhörer</h5>
-                <p class="card-text">Bluetooth Kopfhörer mit ANC (active noice canceling)</p>
-                <a href="#" class="btn btn-secondary">Kaufen</a>
-              </div>
-            </div>
-            {% comment %} CARD END{% endcomment %}
-                  {% comment %} CARD {% endcomment %}
-      <div class="card col mb-3" style="max-width: 550px;">
-        <img src="{% static 'img/kopfhoerer.jpg' %}" class="card-img-top" alt="Kopfhörer">
-        <div class="card-body">
-          <h5 class="card-title">Kopfhörer</h5>
-          <p class="card-text">Bluetooth Kopfhörer mit ANC (active noice canceling)</p>
-          <a href="#" class="btn btn-secondary">Kaufen</a>
-        </div>
-      </div>
-      {% comment %} CARD END{% endcomment %}
+      {% endfor %}
   </div>
 {% endblock content %}
