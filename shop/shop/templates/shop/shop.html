@@ -5,7 +5,7 @@
       {% for artikel in artikels %}
       <div class="col mb-3">
         <div class="card" style="max-width: 550px;">
-          <img src="{% static 'img/kopfhoerer.jpg' %}" class="card-img-top" alt="Kopfhörer">
+          <img src="img/{{ artikel.img }}" class="card-img-top" alt="{{ artikel.name }}">
           <div class="card-body">
             <h5 class="card-title">{{ artikel.name }}</h5>
             <p class="card-text">{{ artikel.beschreibung }}</p>
