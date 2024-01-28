@@ -7,16 +7,23 @@ def shop(request):
   ctx = {'artikels':artikels}
   return render(request, 'shop/shop.html', ctx)
 
-def warenkorb(request):
+def berechnungBestellung(request):
   if request.user.is_authenticated:
     kunde = request.user.kunde
     bestellung, created = Bestellung.objects.get_or_create(kunde = kunde, erledigt = False)
     artikels = bestellung.bestellteartikell_set.all()
   else:
     artikels = []
+    bestellung = []
     
-  ctx = {"artikels": artikels}
+  ctx = {"artikels": artikels, "bestellung":bestellung}
+  return ctx
+
+def warenkorb(request):
+    
+  ctx = berechnungBestellung(request)
   return render(request, 'shop/warenkorb.html', ctx)
 
 def kasse(request):
-  return render(request, 'shop/kasse.html')
+  ctx = berechnungBestellung(request)
+  return render(request, 'shop/kasse.html', ctx)

@@ -9,7 +9,7 @@
     <div class="shadow p-2 mb-4">
       <div class="d-flex">
         <h3 class="me-auto fw-bold p-2">Warenkorb</h3>
-        <p class="fw-bold p-2">Gesamtpreis: 50€</p>
+        <p class="fw-bold p-2">Gesamtpreis: {{ bestellung.get_gesamtpreis | floatformat:2 }} €</p>
         <p><a href="{% url 'kasse' %}" class="btn btn-danger">Kasse</a></p>
       </div>
     </div>
@@ -34,7 +34,7 @@
             <td><img src="{{ artikel.artikel.img.url }}" width="50px" height="auto"></td>
             <td>{{ artikel.artikel.name }}</td>
             <td>{{ artikel.menge }}</td>
-            <td>{{ artikel.artikel.preis  | floatformat:2}} €</td>
+            <td>{{ artikel.get_summe | floatformat:2 }} €</td>
           </tr>
           {% endfor %}
         </tbody>
