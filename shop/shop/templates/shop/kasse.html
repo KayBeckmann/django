@@ -10,7 +10,7 @@
                 <div class="d-flex">
                     <p class="p-2">{{artikel.menge}}</p>
                     <p class="me-auto p-2">{{artikel.artikel.name}}</p>
-                    <p class="p-2">{{artikel.get_summe}} €</p>
+                    <p class="p-2">{{artikel.get_summe | floatformat:2}} €</p>
                 </div>
                 {% endfor %}
                 <hr>

@@ -25,6 +25,7 @@
             <th scope="col">Artikel</th>
             <th scope="col">Menge</th>
             <th scope="col">Preis</th>
+            <th scope="col">Summe</th>
           </tr>
         </thead>
         <tbody class="table-group-divider">
@@ -34,6 +35,7 @@
             <td><img src="{{ artikel.artikel.img.url }}" width="50px" height="auto"></td>
             <td>{{ artikel.artikel.name }}</td>
             <td>{{ artikel.menge }}</td>
+            <td>{{ artikel.artikel.preis | floatformat:2 }} €</td>
             <td>{{ artikel.get_summe | floatformat:2 }} €</td>
           </tr>
           {% endfor %}
