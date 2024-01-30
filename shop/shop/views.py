@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 from . models import *
 
 def shop(request):
@@ -20,10 +21,12 @@ def berechnungBestellung(request):
   return ctx
 
 def warenkorb(request):
-    
   ctx = berechnungBestellung(request)
   return render(request, 'shop/warenkorb.html', ctx)
 
 def kasse(request):
   ctx = berechnungBestellung(request)
   return render(request, 'shop/kasse.html', ctx)
+
+def artikelbackend(request):
+  return JsonResponse("Artikel hinzugefuegt", safe=False)
