@@ -14,8 +14,9 @@ function updateKundenBestellung(artikelId, action){
   fetch(url,{
     method:'post',
     headers:{
-      'Content-Type':'application/json'
+      'Content-Type':'application/json',
+      'X-CSRFToken':csrftoken,
     },
-    body:JSON.stringify({'artikel':artikelId, 'action':action})
+    body:JSON.stringify({'artikelId':artikelId, 'action':action})
   })
 }
