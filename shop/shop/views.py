@@ -33,5 +33,14 @@ def artikelbackend(request):
   daten = json.loads(request.body)
   artikelId = daten['artikelId']
   action = daten['action']
+  kunde = request.user.kunde
+  artikel = Artikel.objects.get(id=artikelId)
+  bestellung, created = Bestellung.objects.get_or_create(kunde = kunde, erledigt=False)
+  bestellteArtikell, created = BestellteArtikell.objects.get_or_create(bestellung=bestellung, artikel=artikel)
+  
+  if action == 'bestellen':
+    bestellteArtikell.menge = bestellteArtikell.menge + 1
+    
+  bestellteArtikell.save()
   
   return JsonResponse("Artikel hinzugefuegt", safe=False)
