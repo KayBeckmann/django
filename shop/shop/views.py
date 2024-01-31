@@ -40,7 +40,12 @@ def artikelbackend(request):
   
   if action == 'bestellen':
     bestellteArtikell.menge = bestellteArtikell.menge + 1
-    
+  elif action == 'entfernen':
+    bestellteArtikell.menge = bestellteArtikell.menge - 1
+      
   bestellteArtikell.save()
+  
+  if bestellteArtikell.menge <= 0:
+    bestellteArtikell.delete()
   
   return JsonResponse("Artikel hinzugefuegt", safe=False)

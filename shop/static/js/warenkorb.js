@@ -10,7 +10,7 @@ for(let i=0; i < bestellenButtons.length; i++){
 
 function updateKundenBestellung(artikelId, action){
   let url = "/artikel_backend/"
-  
+  console.log("ID: ", artikelId);
   fetch(url,{
     method:'post',
     headers:{
@@ -18,5 +18,8 @@ function updateKundenBestellung(artikelId, action){
       'X-CSRFToken':csrftoken,
     },
     body:JSON.stringify({'artikelId':artikelId, 'action':action})
+  })
+  .then(()=>{
+    location.reload()
   })
 }
