@@ -31,7 +31,7 @@
         <tbody class="table-group-divider">
           {% for artikel in artikels %}
           <tr>
-            <th scope="row">{{ artikel.id }}</th>
+            <th scope="row">{{ forloop.counter }}</th>
             <td><img src="{{ artikel.artikel.img.url }}" width="50px" height="auto"></td>
             <td>{{ artikel.artikel.name }}</td>
             <td>{{ artikel.menge }}</td>
