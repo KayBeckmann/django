@@ -5,7 +5,9 @@
     <div class="d-flex align-items-center">
       <a class="btn btn-light p-2" href="#">Login</a>
       <a class="nav-link p-2 link-light" href="{% url 'warenkorb' %}"><img src="{% static 'img/floppy.png' %}" alt="Warenkorb">
+        {% if menge > 0 %}
         <span class="badge rounded-pill bg-danger position-absolute top-25 start-25 translate-middle">{{ menge }}</span>
+        {% endif %}
       </a>
     </div>
   </div>
