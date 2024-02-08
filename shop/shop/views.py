@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import JsonResponse
+from django.contrib.auth import authenticate, login, logout
 import json
 from . models import *
 
@@ -52,3 +53,22 @@ def artikelbackend(request):
     bestellteArtikell.delete()
   
   return JsonResponse("Artikel hinzugefuegt", safe=False)
+
+def loginSeite(request):
+  if request.method == 'POST':
+    benutzername = request.POST['benutzername']
+    passwort = request.POST['passwort']
+    
+    benutzer = authenticate(request, username=benutzername, password=passwort)
+    
+    if benutzer is not None:
+      login(request, benutzer)
+      return redirect('shop')
+    else:
+      messages.error(request, "Fehler beim Login.")
+  
+  return render(request, 'shop/login.html')
+
+def logoutSeite(request):
+  logout(request)
+  return redirect('shop')

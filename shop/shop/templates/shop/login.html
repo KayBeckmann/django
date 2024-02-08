@@ -1,0 +1,18 @@
+{% extends 'shop/index.html' %}
+
+{% block content %}
+  <div>
+    <form method="POST" action="">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="benutzer" class="form-label">Benutzername</label>
+        <input type="text" id="benutzer" class="form-control" aria-describedby="benutzername" name="benutzername" placeholder="Benutzername">
+      </div>
+      <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Passwort</label>
+        <input type="password" class="form-control" id="exampleInputPassword1" name="passwort" placeholder="Passwort">
+      </div>
+      <button type="submit" class="btn btn-secondary">Login</button>
+    </form>
+  </div>
+{% endblock content %}
