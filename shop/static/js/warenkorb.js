@@ -23,3 +23,20 @@ function updateKundenBestellung(artikelId, action){
     location.reload()
   })
 }
+
+//KASSE
+let formular = document.getElementById('formular')
+
+formular.addEventListener('submit', function(e){
+  e.preventDefault()
+  document.getElementById('formular-button').classList.add('d-none')
+  document.getElementById('bezahlen-info').classList.remove('d-none')
+})
+
+document.getElementById('bezahlen-button').addEventListener('click', function(e){
+  submitFormular();
+})
+
+function submitFormular(){
+  alert("Bestellung ist eingegangen.")
+}

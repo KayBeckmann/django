@@ -22,14 +22,14 @@
         </div>
         <div class="col-8">
             <div class="shadow p-4">
-                <form class="row g-3">
+                <form class="row g-3" id="formular">
                     <div class="col-md-6">
                       <label for="inputName" class="form-label">Name</label>
-                      <input type="text" class="form-control" id="inputName">
+                      <input type="text" class="form-control" id="inputName" value={{request.user|title}}>
                     </div>
                     <div class="col-md-6">
                         <label for="inputEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="inputEmail">
+                        <input type="email" class="form-control" id="inputEmail" value={{request.user.email}}>
                     </div>
                     <div class="col-12">
                       <label for="inputAddress" class="form-label">Addresse</label>
@@ -51,6 +51,10 @@
                       <button type="submit" id="formular-button" class="btn btn-secondary">weiter</button>
                     </div>
                   </form>
+                  <div class="d-flex d-none" id="bezahlen-info">
+                    <p class="me-auto fw-bold">Zahlung: Paypal</p>
+                    <button class="btn btn-danger" id="bezahlen-button">Bezahlen</button>
+                  </div>
             </div>
         </div>
     </div>

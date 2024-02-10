@@ -4,6 +4,7 @@
     <a class="navbar-brand link-light" href="{% url 'shop' %}"><img src="{% static 'img/logo.png' %}" alt="TechMax"></a>
     <div class="d-flex align-items-center">
       {% if request.user.is_authenticated %}
+        <h5 class="text-light m-2">Hallo {{request.user|title}}</h5>
         <a class="btn btn-light p-2" href="{% url 'logout' %}">Logout</a>
       {% else %}
         <a class="btn btn-light p-2" href="{% url 'login' %}">Login</a>
