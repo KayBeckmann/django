@@ -46,7 +46,7 @@ class BestellteArtikell(models.Model):
   datum = models.DateTimeField(auto_now_add=True)
   
   def __str__(self):
-    return self.artikel.name
+    return str("Qty: " + str(self.menge) + "; Name: " + self.artikel.name)
   
   @property
   def get_summe(self):
