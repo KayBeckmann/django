@@ -14,7 +14,11 @@ SECRET_KEY = 'django-insecure-m3-(b^(dp+h61bq_se(-^jdceft7fjxak!rkrjc6w(qh3obdv%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '10.10.0.22',
+]
 
 MESSAGES_TAGS = {
     messages.INFO:'alert-info',
