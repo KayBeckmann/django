@@ -10,7 +10,7 @@ for(let i=0; i < bestellenButtons.length; i++){
 
 function updateKundenBestellung(artikelId, action){
   let url = "/artikel_backend/"
-  console.log("ID: ", artikelId);
+
   fetch(url,{
     method:'post',
     headers:{
@@ -26,6 +26,7 @@ function updateKundenBestellung(artikelId, action){
 
 //KASSE
 let formular = document.getElementById('formular')
+let gesamtpreis = document.getElementById('gesamtpreis').value
 
 formular.addEventListener('submit', function(e){
   e.preventDefault()
@@ -38,5 +39,29 @@ document.getElementById('bezahlen-button').addEventListener('click', function(e)
 })
 
 function submitFormular(){
-  alert("Bestellung ist eingegangen.")
+  let benutzerdaten = {
+    'name': formular.inputName.value,
+    'email': formular.inputEmail.value,
+    'gesamtpreis': gesamtpreis
+  }
+  let lieferadresse = {
+    'adresse':formular.inputAdresse.value,
+    'plz':formular.inputPlz.value,
+    'stadt':formular.inputStadt.value,
+    'land':formular.inputLand.value,
+  }
+
+  let url = "/bestellen/"
+  
+  fetch(url,{
+    method:'post',
+    headers:{
+      'Content-Type':'application/json',
+      'X-CSRFToken':csrftoken,
+    },
+    body:JSON.stringify({'benutzerdaten':benutzerdaten, 'lieferadresse':lieferadresse})
+  })
+  .then(()=>{
+    window.location.href="/"
+  })
 }
