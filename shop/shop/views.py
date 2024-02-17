@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 import json
 from . models import *
+import uuid
 
 def shop(request):
   # ctx steht für CONTEXT
@@ -100,6 +101,27 @@ def regSeite(request):
   return render(request, 'shop/login.html', ctx)
 
 def bestellen(request):
-  print(request.body)
+  auftrags_id = uuid.uuid4()
+  daten = json.loads(request.body)
+  
+  if request.user.is_authenticated:
+    kunde = request.user.kunde
+    bestellung, created = Bestellung.objects.get_or_create(kunde = kunde, erledigt = False)
+    gesamtpreis = float(daten['benutzerdaten']['gesamtpreis'])
+    bestellung.auftrags_id = auftrags_id
+    bestellung.erledigt = True
+    bestellung.save()
+    
+    Adresse.objects.create(
+      kunde = kunde,
+      bestellung = bestellung,
+      strasse = daten['lieferadresse']['adresse'],
+      plz = daten['lieferadresse']['plz'],
+      stadt = daten['lieferadresse']['stadt'],
+      land = daten['lieferadresse']['land']
+    )
+  else:
+    print("nicht eingeloggt!")
+  
   messages.success(request, "Danke für Ihre Bestellung.")
   return JsonResponse('Bestellung erfolgreich', safe=False)
