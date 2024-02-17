@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
+from django.utils.safestring import mark_safe
 import json
 from . models import *
 import uuid
@@ -123,5 +124,16 @@ def bestellen(request):
   else:
     print("nicht eingeloggt!")
   
-  messages.success(request, "Danke für Ihre Bestellung.")
+  auftragsUrl = str(auftrags_id)
+  messages.success(request, mark_safe("Danke für Ihre <a href='/bestellung/"+auftragsUrl+"'>Bestellung</a>."))
   return JsonResponse('Bestellung erfolgreich', safe=False)
+
+def bestellung(request, id):
+  bestellung = Bestellung.objects.filter(auftrags_id = id)
+  if bestellung:
+    bestellung = Bestellung.objects.get(auftrags_id=id)
+    artikels = bestellung.bestellteartikell_set.all()
+    ctx = {'artikels':artikels, 'bestellung':bestellung}
+    return render(request, 'shop/bestellung.html', ctx)
+  else:
+    return redirect('shop')

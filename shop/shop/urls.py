@@ -10,5 +10,6 @@ urlpatterns = [
     path('logout/', views.logoutSeite, name='logout'),
     path('reg/', views.regSeite, name='reg'),
     path('bestellen/', views.bestellen, name='bestellen'),
+    path('bestellung/<uuid:id>', views.bestellung, name='bestellung'),
 ]
 
