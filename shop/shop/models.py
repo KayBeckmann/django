@@ -24,8 +24,8 @@ class Bestellung(models.Model):
   erledigt = models.BooleanField(default=False, null=True, blank=True)
   auftrags_id = models.CharField(max_length=100, null=True)
   
-  #def __str__(self):
-  #  return str(self.__all__)
+  def __str__(self):
+    return str(self.id)
   
   @property
   def get_gesamtpreis(self):

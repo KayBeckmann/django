@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
@@ -128,9 +129,11 @@ def bestellen(request):
   messages.success(request, mark_safe("Danke für Ihre <a href='/bestellung/"+auftragsUrl+"'>Bestellung</a>."))
   return JsonResponse('Bestellung erfolgreich', safe=False)
 
+@login_required(login_url = 'login')
 def bestellung(request, id):
-  bestellung = Bestellung.objects.filter(auftrags_id = id)
-  if bestellung:
+  bestellung = Bestellung.objects.get(auftrags_id = id)
+  print(bestellung)
+  if bestellung: # and str(request.user) == str(bestellung.kunde):
     bestellung = Bestellung.objects.get(auftrags_id=id)
     artikels = bestellung.bestellteartikell_set.all()
     ctx = {'artikels':artikels, 'bestellung':bestellung}
