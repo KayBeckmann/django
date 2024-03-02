@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'shop.apps.ShopConfig',
+    'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -131,3 +132,5 @@ STATICFILES_DIRS = [
 MEDIA_URL = "/img/"
 
 MEDIA_ROOT = BASE_DIR / "static/img/upload"
+
+PAYPAL_TEST = True
