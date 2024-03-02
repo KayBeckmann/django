@@ -1,67 +1,90 @@
-let bestellenButtons = document.getElementsByClassName("warenkorb-bestellen");
+let bestellenButtons = document.getElementsByClassName("warenkorb-bestellen")
 
-for(let i=0; i < bestellenButtons.length; i++){
-  bestellenButtons[i].addEventListener('click', function() {
-    let artikelId = this.dataset.artikel;
-    let action = this.dataset.action;
-    updateKundenBestellung(artikelId, action)
-  })
+for (let i = 0; i < bestellenButtons.length; i++){
+    bestellenButtons[i].addEventListener('click', function(){
+        let artikelID = this.dataset.artikel;
+        let action = this.dataset.action;
+        
+        if(benutzer == 'AnonymousUser'){
+            updateGastBestellung(artikelID, action)
+        } else{
+            updateKundenBestellung(artikelID, action)
+        }
+    })
 }
 
-function updateKundenBestellung(artikelId, action){
-  let url = "/artikel_backend/"
+function updateGastBestellung(artikelID, action){
+    //console.log("Gast " +artikelID+" "+action)
+    if(action == 'bestellen'){
+        if(warenkorb[artikelID] == undefined){
+            warenkorb[artikelID] = {'menge':1}
+        } else{
+            warenkorb[artikelID]['menge'] +=1
+        }
+    }
+    if(action == 'entfernen'){
+        warenkorb[artikelID]['menge'] -=1
 
-  fetch(url,{
-    method:'post',
-    headers:{
-      'Content-Type':'application/json',
-      'X-CSRFToken':csrftoken,
-    },
-    body:JSON.stringify({'artikelId':artikelId, 'action':action})
-  })
-  .then(()=>{
+        if(warenkorb[artikelID]['menge'] <=0){
+            delete warenkorb[artikelID]
+        }
+    }
+    document.cookie = 'warenkorb=' + JSON.stringify(warenkorb) + ";domain;path=/; SameSite=None; Secure"
+    console.log(warenkorb)
     location.reload()
-  })
 }
 
-//KASSE
+function updateKundenBestellung(artikelID, action){
+    let url = "/artikel_backend/";
+
+    fetch(url, {
+        method: 'post',
+        headers:{
+            'Content-Type':'application/json',
+            'X-CSRFToken':csrftoken,
+        },
+        body:JSON.stringify({'artikelID':artikelID, 'action':action})
+    })
+    .then(()=>location.reload())
+}
+
+//Kasse
 let formular = document.getElementById('formular')
 let gesamtpreis = document.getElementById('gesamtpreis').value
 
 formular.addEventListener('submit', function(e){
-  e.preventDefault()
-  document.getElementById('formular-button').classList.add('d-none')
-  document.getElementById('bezahlen-info').classList.remove('d-none')
+    e.preventDefault()
+    document.getElementById('formular-button').classList.add('d-none');
+    document.getElementById('bezahlen-info').classList.remove('d-none');
 })
 
 document.getElementById('bezahlen-button').addEventListener('click', function(e){
-  submitFormular();
+    submitFormular()
 })
 
 function submitFormular(){
-  let benutzerdaten = {
-    'name': formular.inputName.value,
-    'email': formular.inputEmail.value,
-    'gesamtpreis': gesamtpreis
-  }
-  let lieferadresse = {
-    'adresse':formular.inputAdresse.value,
-    'plz':formular.inputPlz.value,
-    'stadt':formular.inputStadt.value,
-    'land':formular.inputLand.value,
-  }
+    let benutzerDaten = {
+        'name': formular.inputName.value,
+        'email': formular.inputEmail.value,
+        'gesamtpreis': gesamtpreis
+    }
+    let lieferadresse = {
+        'adresse': formular.inputAdresse.value,
+        'plz': formular.inputPlz.value,
+        'stadt': formular.inputStadt.value,
+        'land': formular.inputLand.value,
+    }
+    console.log(benutzerDaten, lieferadresse)
+    
+    let url = "/bestellen/";
 
-  let url = "/bestellen/"
-  
-  fetch(url,{
-    method:'post',
-    headers:{
-      'Content-Type':'application/json',
-      'X-CSRFToken':csrftoken,
-    },
-    body:JSON.stringify({'benutzerdaten':benutzerdaten, 'lieferadresse':lieferadresse})
-  })
-  .then(()=>{
-    window.location.href="/"
-  })
+    fetch(url, {
+        method: 'post',
+        headers:{
+            'Content-Type':'application/json',
+            'X-CSRFToken':csrftoken,
+        },
+        body:JSON.stringify({'benutzerDaten':benutzerDaten, 'lieferadresse':lieferadresse})
+    })
+    .then(()=>window.location.href="/")
 }

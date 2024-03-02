@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from . models import *
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 import json
 from django.contrib.auth import authenticate, login, logout
 from . forms import EigeneUserCreationForm
 import uuid
 from django.utils.safestring import mark_safe
+from . viewtools import gastCookie, gastBestellung
 
 # Create your views here.
 
@@ -22,32 +23,9 @@ def warenkorb(request):
         bestellung, created = Bestellung.objects.get_or_create(kunde=kunde, erledigt=False)
         artikels = bestellung.bestellteartikel_set.all()
     else:
-        try:
-            warenkorb = json.loads(request.COOKIES['warenkorb'])
-        except:
-            warenkorb = {}
-
-        artikels = []
-        bestellung = {'get_gesamtpreis':0, 'get_gesamtmenge':0}
-        menge = bestellung['get_gesamtmenge']
-        
-        for i in warenkorb:
-            menge += warenkorb[i]["menge"]
-            artikel = Artikel.objects.get(id=i)
-            gesamtpreis = (artikel.preis * warenkorb[i]['menge'])
-            bestellung['get_gesamtpreis'] += gesamtpreis
-
-            artikel = {
-                'artikel':{
-                    'id':artikel.id,
-                    'name':artikel.name,
-                    'preis':artikel.preis,
-                    'bild':artikel.bild
-                },
-                'menge':warenkorb[i]['menge'],
-                'get_summe':gesamtpreis
-            }
-            artikels.append(artikel)
+        cookieDaten = gastCookie(request)
+        artikels = cookieDaten['artikels']
+        bestellung = cookieDaten['bestellung']
 
     ctx = {"artikels":artikels, "bestellung":bestellung}        
     return render(request, 'shop/warenkorb.html',ctx)
@@ -58,8 +36,9 @@ def kasse(request):
         bestellung, created = Bestellung.objects.get_or_create(kunde=kunde, erledigt=False)
         artikels = bestellung.bestellteartikel_set.all()
     else:
-        artikels = []
-        bestellung = []
+        cookieDaten = gastCookie(request)
+        artikels = cookieDaten['artikels']
+        bestellung = cookieDaten['bestellung']
 
     ctx = {"artikels":artikels, "bestellung":bestellung}      
     return render(request, 'shop/kasse.html', ctx)
@@ -137,6 +116,10 @@ def bestellen(request):
     if request.user.is_authenticated:
         kunde = request.user.kunde
         bestellung, created = Bestellung.objects.get_or_create(kunde=kunde, erledigt=False)
+
+    else:
+        kunde, bestellung = gastBestellung(request, daten)       
+
         gesamtpreis = float(daten['benutzerDaten']['gesamtpreis'])
         bestellung.auftrags_id = auftrags_id
         bestellung.erledigt = True
@@ -151,12 +134,12 @@ def bestellen(request):
             land=daten['lieferadresse']['land'],
         )
 
-    else:
-        print("nicht eingeloggt")        
-
     auftragsUrl = str(auftrags_id)
     messages.success(request, mark_safe("Vielen Dank für Ihre <a href='/bestellung/"+auftragsUrl+"'>Bestellung: "+auftragsUrl+"</a>"))
-    return JsonResponse('Bestellung erfolgreich', safe=False)
+    #return JsonResponse('Bestellung erfolgreich', safe=False)
+    response = HttpResponse('Bestellung erfolgreich')
+    response.delete_cookie('warenkorb')
+    return response
 
 @login_required(login_url='login')
 def bestellung(request,id):

@@ -10,27 +10,35 @@
                 <div class="d-flex">
                     <p class="p-2">{{artikel.menge}}</p>
                     <p class="me-auto p-2">{{artikel.artikel.name}}</p>
-                    <p class="p-2">{{artikel.get_summe | floatformat:2}} €</p>
+                    <p class="p-2">{{artikel.get_summe|floatformat:2}} €</p>
                 </div>
                 {% endfor %}
                 <hr>
                 <div class="d-flex">
-                    <p class="me-auto fw-bold p-2">Menge: {{ bestellung.get_gesamtmenge }}</p>
-                    <p class="fw-bold p-2">Gesamtpreis: {{ bestellung.get_gesamtpreis | floatformat:2 }} €</p>
-                    <input type="number" class="d-none" id="gesamtpreis" value={{ bestellung.get_gesamtpreis | floatformat:2 }}>
+                    <p class="me-auto fw-bold p-2">Menge: {{bestellung.get_gesamtmenge}}</p>
+                    <p class="fw-bold p-2">Gesamtpreis: {{bestellung.get_gesamtpreis|floatformat:2}} €</p>
+                    <input type="number" class="d-none" id="gesamtpreis" value={{bestellung.get_gesamtpreis|floatformat:2}}>
                 </div>
             </div>
         </div>
         <div class="col-8">
             <div class="shadow p-4">
-                <form class="row g-3" id="formular">
+                <form id="formular" class="row g-3">
                     <div class="col-md-6">
                       <label for="inputName" class="form-label">Name</label>
+                      {% if request.user.is_authenticated %}
                       <input type="text" class="form-control" id="inputName" value={{request.user|title}} required>
+                      {% else %}
+                      <input type="text" class="form-control" id="inputName" required>
+                      {% endif %}
                     </div>
                     <div class="col-md-6">
                         <label for="inputEmail" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="inputEmail" required placeholder="Email" value={{request.user.email}}>
+                        {% if request.user.is_authenticated %}
+                        <input type="email" class="form-control" id="inputEmail" value={{request.user.email}} required>
+                        {% else %}
+                        <input type="email" class="form-control" id="inputEmail" required>
+                        {% endif %}
                     </div>
                     <div class="col-12">
                       <label for="inputAddress" class="form-label">Addresse</label>
