@@ -1,24 +1,15 @@
-from . models import Bestellung, BestellteArtikel
-import json
+from . models import Bestellung, BestellteArtikell
 
 def warenkorb_anzahl(request):
-
-    if request.user.is_authenticated:
-        kunde = request.user.kunde
-        bestellung, created = Bestellung.objects.get_or_create(kunde=kunde, erledigt=False)
-
-        if bestellung:
-            menge = bestellung.get_gesamtmenge
-        else:
-            menge = 0
-
+  if request.user.is_authenticated:
+    kunde = request.user.kunde
+    bestellung, created = Bestellung.objects.get_or_create(kunde = kunde, erledigt = False)
+    
+    if bestellung:
+      menge = bestellung.get_gesamtmenge
     else:
-        menge = 0
-        try:
-            warenkorb = json.loads(request.COOKIES['warenkorb'])
-        except:
-            warenkorb = {}
-        for i in warenkorb:
-            menge += warenkorb[i]["menge"]
-
-    return {'menge': menge}
+      menge = 0
+  else:
+    menge = 0
+    
+  return {'menge': menge}
