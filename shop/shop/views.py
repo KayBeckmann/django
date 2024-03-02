@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from . models import *
@@ -7,10 +8,7 @@ import json
 from django.contrib.auth import authenticate, login, logout
 from . forms import EigeneUserCreationForm
 import uuid
-from django.utils.safestring import mark_safe
-from . viewtools import gastCookie, gastBestellung
-
-# Create your views here.
+from paypal.standard.forms import PayPalPaymentsForm
 
 def shop(request):
     artikels = Artikel.objects.all()
@@ -110,36 +108,45 @@ def regBenutzer(request):
     return render(request, 'shop/login.html', ctx)
 
 def bestellen(request):
-    auftrags_id = uuid.uuid4()
-    daten = json.loads(request.body)
+  auftrags_id = uuid.uuid4()
+  daten = json.loads(request.body)
+  
+  if request.user.is_authenticated:
+    kunde = request.user.kunde
+    bestellung, created = Bestellung.objects.get_or_create(kunde = kunde, erledigt = False)
+    gesamtpreis = float(daten['benutzerdaten']['gesamtpreis'])
+    bestellung.auftrags_id = auftrags_id
+    bestellung.erledigt = True
+    bestellung.save()
+    
+    Adresse.objects.create(
+      kunde = kunde,
+      bestellung = bestellung,
+      strasse = daten['lieferadresse']['adresse'],
+      plz = daten['lieferadresse']['plz'],
+      stadt = daten['lieferadresse']['stadt'],
+      land = daten['lieferadresse']['land']
+    )
 
-    if request.user.is_authenticated:
-        kunde = request.user.kunde
-        bestellung, created = Bestellung.objects.get_or_create(kunde=kunde, erledigt=False)
+    paypal_dict = {
+        "business": "sb-347tah29743032@business.example.com",
+        "amount": gesamtpreis,
+        "item_name": auftrags_id,
+        "invoice": auftrags_id,
+        "currency_code": "EUR",
+        "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
+        "return": request.build_absolute_uri(reverse('shop')),
+        "cancel_return": request.build_absolute_uri(reverse('shop')),
+    }
 
-    else:
-        kunde, bestellung = gastBestellung(request, daten)       
+    paypalform = PayPalPaymentsForm(initial = paypal_dict)
 
-        gesamtpreis = float(daten['benutzerDaten']['gesamtpreis'])
-        bestellung.auftrags_id = auftrags_id
-        bestellung.erledigt = True
-        bestellung.save()
-
-        Adresse.objects.create(
-            kunde=kunde,
-            bestellung=bestellung,
-            adresse=daten['lieferadresse']['adresse'],
-            plz=daten['lieferadresse']['plz'],
-            stadt=daten['lieferadresse']['stadt'],
-            land=daten['lieferadresse']['land'],
-        )
-
-    auftragsUrl = str(auftrags_id)
-    messages.success(request, mark_safe("Vielen Dank für Ihre <a href='/bestellung/"+auftragsUrl+"'>Bestellung: "+auftragsUrl+"</a>"))
-    #return JsonResponse('Bestellung erfolgreich', safe=False)
-    response = HttpResponse('Bestellung erfolgreich')
-    response.delete_cookie('warenkorb')
-    return response
+  else:
+    print("nicht eingeloggt!")
+  
+  auftragsUrl = str(auftrags_id)
+  messages.success(request, mark_safe("Danke für Ihre <a href='/bestellung/"+auftragsUrl+"'>Bestellung</a>.</br>Jetzt bezahlen: "+paypalform.render()))
+  return JsonResponse('Bestellung erfolgreich', safe=False)
 
 @login_required(login_url='login')
 def bestellung(request,id):
