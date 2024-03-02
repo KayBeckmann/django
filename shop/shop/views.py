@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -8,6 +9,7 @@ from django.utils.safestring import mark_safe
 import json
 from . models import *
 import uuid
+from paypal.standard.forms import PayPalPaymentsForm
 
 def shop(request):
   # ctx steht für CONTEXT
@@ -122,11 +124,25 @@ def bestellen(request):
       stadt = daten['lieferadresse']['stadt'],
       land = daten['lieferadresse']['land']
     )
+
+    paypal_dict = {
+        "business": "sb-347tah29743032@business.example.com",
+        "amount": gesamtpreis,
+        "item_name": auftrags_id,
+        "invoice": auftrags_id,
+        "currency_code": "EUR",
+        "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
+        "return": request.build_absolute_uri(reverse('shop')),
+        "cancel_return": request.build_absolute_uri(reverse('shop')),
+    }
+
+    paypalform = PayPalPaymentsForm(initial = paypal_dict)
+
   else:
     print("nicht eingeloggt!")
   
   auftragsUrl = str(auftrags_id)
-  messages.success(request, mark_safe("Danke für Ihre <a href='/bestellung/"+auftragsUrl+"'>Bestellung</a>."))
+  messages.success(request, mark_safe("Danke für Ihre <a href='/bestellung/"+auftragsUrl+"'>Bestellung</a>.</br>Jetzt bezahlen: "+paypalform.render()))
   return JsonResponse('Bestellung erfolgreich', safe=False)
 
 @login_required(login_url = 'login')
